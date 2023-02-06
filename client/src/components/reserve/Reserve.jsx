@@ -1,8 +1,10 @@
 import { faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import axios from 'axios'
 import React, { useContext, useState } from 'react'
 import { SearchContext } from '../../context/SearchContext'
 import useFetch from '../hooks/useFetch'
+import { useNavigate } from "react-router-dom";
 import './reserve.css'
 
 const Reserve = ({setOpen,hotelId}) => {
@@ -49,8 +51,25 @@ const {dates} = useContext(SearchContext);
   }
 
    console.log(selectedRooms);
+   
+   const navigate = useNavigate();
 
-   const handleClick = () => {
+   const handleClick = async() => {
+       try{
+
+            await Promise.all(selectedRooms.map((roomId) => 
+            {
+            const res = axios.put(`/api/rooms/availability/${roomId}`,{dates:alldates,});
+            return res.data;
+
+          }));
+
+          setOpen(false);
+          navigate("/");
+          
+       }catch(err){
+
+       }
         
    }
 
@@ -67,8 +86,10 @@ const {dates} = useContext(SearchContext);
 
                 <div className='rMax'>Max People :<b>{item.maxPeople}</b></div>
                 <div className='rPrice'>{item.price}</div>
-            </div>   
+            </div>  
+            <div className='rSelectRooms'> 
             <div className="room">
+
                 {item.roomNumbers.map(roomNumber =>(
                     <div className="room">
                     <label>{roomNumber.number}</label>
@@ -79,9 +100,11 @@ const {dates} = useContext(SearchContext);
                     />
                     </div>
                 ))}
+
             </div> 
          </div>   
-        ))} 
+         </div> 
+        ))}
         <button onClick={handleClick} className="rButton">Reserve Now</button>
       </div>
     </div>
