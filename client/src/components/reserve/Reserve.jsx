@@ -54,6 +54,8 @@ const {dates} = useContext(SearchContext);
    
    const navigate = useNavigate();
 
+
+   //Reserver now handling
    const handleClick = async() => {
        try{
 
